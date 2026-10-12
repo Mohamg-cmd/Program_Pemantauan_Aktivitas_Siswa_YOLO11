@@ -1,0 +1,13 @@
+# CONTOH FORMAT SAJA — BUKAN DATA PENELITIAN.
+# Koordinat di bawah adalah PLACEHOLDER dan HARUS diganti dengan hasil
+# kalibrasi pada video Anda sendiri:
+#     python tools/calibrate_seats.py --video data/classroom.mp4 --output data/student_seats.csv
+# Jangan pernah memakai angka di berkas ini sebagai koordinat kursi sebenarnya.
+# Satuan: piksel pada resolusi video sumber. Titik (seat_x, seat_y) adalah
+# tengah-bawah kursi, sejajar dengan anchor bottom-center pada src/identity.py.
+student_id,seat_id,seat_x,seat_y,roi_x1,roi_y1,roi_x2,roi_y2
+S01,seat_01,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER
+S02,seat_02,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER
+S03,seat_03,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER
+# ... lanjutkan hingga S21 (total 21 baris data, satu per siswa)
+S21,seat_21,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER,PLACEHOLDER

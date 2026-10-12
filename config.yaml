@@ -1,0 +1,142 @@
+# ============================================================
+# YOLO11 Classroom Analytics — konfigurasi utama
+# ============================================================
+# Semua path relatif terhadap direktori kerja saat menjalankan
+# `python run_pipeline.py --config config.yaml`
+#
+# PRINSIP: BoT-SORT hanya TRAJECTORY TRACKER. Identitas siswa ditentukan
+# oleh KURSI TETAP (fixed seat). track_id BUKAN student_id.
+
+# ---------- Sumber & keluaran ----------
+source:
+  model_path: "weights/best.pt"      # bobot YOLO11 Anda
+  video_path: "data/video_part001.mp4"   # video CCTV kelas
+  data_yaml: null                    # isi path dataset/data.yaml hanya jika evaluasi detector diaktifkan
+
+output_dir: "output"
+
+# ---------- Deteksi ----------
+detection:
+  conf: 0.25          # ambang confidence
+  iou: 0.50           # ambang IoU untuk NMS
+  imgsz: 640          # sesuaikan dengan ukuran saat training
+  device: "0"         # id GPU CUDA, atau "cpu"
+  save_video: false
+  force_detect: false
+  keep_untracked: false   # true = simpan deteksi tanpa track ID (track_id=-1)
+
+# ---------- Tracking ----------
+tracking:
+  tracker: "botsort.yaml"   # bawaan Ultralytics
+  with_reid: false          # true = tulis botsort_reid.yaml dengan with_reid: True
+  reid_model: null          # opsional; bobot ReID kustom
+# CATATAN: botsort.yaml bawaan memakai with_reid: False. Jangan mengklaim
+# "BoT-SORT + ReID" pada manuskrip kecuali with_reid di atas benar-benar true.
+
+# ---------- Agregasi temporal ----------
+temporal:
+  fps: 25                  # FPS aktual video yang digunakan pada run final
+  min_track_frames: 30    # buang entitas dengan < 30 frame unik
+  representation: "duration"       # representasi utama untuk ranking
+  representations:                 # untuk eksperimen perbandingan
+    - duration
+    - frequency
+  strict_classes: true    # berhenti bila class_name di luar `criteria`
+
+# ---------- Identitas (LAPISAN PALING PENTING) ----------
+identity:
+  mode: "student_level"
+  seats_csv: "data/student_seats.csv"
+  assignment_method: "fixed_seat"
+  expected_students: 21
+
+  # Fixed-seat / track-level identity. Nilai ini adalah titik awal yang dapat
+  # dikonfigurasi, bukan hasil optimasi atau klaim ground truth.
+  max_seat_distance: 150.0
+  roi_bonus: 0.25
+  min_track_seat_score: 0.45
+  min_track_seat_purity: 0.60
+  min_track_positive_fraction: 0.25
+  track_ambiguity_margin: 0.08
+  short_track_frames: 10
+  short_track_min_seat_score: 0.65
+
+  # Parameter kompatibilitas / temporal. Identitas TIDAK lagi di-unassign hanya
+  # karena satu frame keluar ROI; identity diwariskan dari track yang valid.
+  min_identity_confidence: 0.35
+  temporal_smoothing_window: 15
+  hysteresis_switch_margin: 0.20
+  reassociation_gap_frames: 90
+
+  allow_reid_secondary: true
+  weight_spatial: 0.70
+  weight_temporal: 0.20
+  weight_reid: 0.10
+
+  # Quality gates. Duplicate detection ditulis sebagai warning/gate terpisah
+  # karena duplicate tidak sama dengan identity failure.
+  max_ambiguous_ratio: 0.05
+  max_duplicate_ratio: 0.30
+  min_student_frame_coverage: 0.50
+  min_mean_student_frame_coverage: 0.70
+  min_seat_purity: 0.70
+  max_long_gap_ratio: 0.25
+  long_gap_auto_verify_purity: 0.90
+  long_gap_auto_verify_score: 0.70
+
+# ---------- Kriteria / AHP ----------
+# Urutan kriteria WAJIB sama dengan baris/kolom ahp.matrix, dan nama di sini
+# HARUS sama persis dengan class_name pada model YOLO11 Anda.
+criteria: ["Angkat Tangan", "Berdiri", "Diam", "Tidur"]
+
+orientation:
+  "Angkat Tangan": benefit
+  "Berdiri":       benefit
+  "Diam":          cost
+  "Tidur":         cost
+
+ahp:
+  # Matriks pairwise Saaty (4x4, resiprokal, skala 1-9).
+  # Matriks final yang disusun peneliti dan telah ditinjau/disetujui pembimbing.
+  matrix:
+    - [1.000, 2.000, 3.000, 3.000]   # Angkat Tangan
+    - [0.500, 1.000, 2.000, 3.000]   # Berdiri
+    - [0.333333333333, 0.500, 1.000, 2.000]   # Diam
+    - [0.333333333333, 0.333333333333, 0.500, 1.000]   # Tidur
+  source: "researcher_constructed_supervisor_reviewed"
+  expert_count: 0              # bukan elisitasi multi-pakar
+  aggregation_method: null     # mis. "geometric" bila menggabungkan >1 pakar
+  block_on_inconsistent: true  # CR > 0.10 memblokir ranking final
+
+# ---------- SAW ----------
+saw:
+  zero_epsilon: 1.0e-6     # pengganti 0 pada kriteria cost; WAJIB dilaporkan
+  zero_strategy: "epsilon" # "epsilon" (baseline) | "shift_one" | "max_ratio"
+
+# ---------- Sensitivity ----------
+sensitivity:
+  perturbations: [-0.20, -0.10, -0.05, 0.05, 0.10, 0.20]
+
+monte_carlo:
+  enabled: true
+  iterations: 5000
+  seed: 42
+  method: "dirichlet_around_base"   # | "uniform_simplex"
+  concentration: 50.0
+
+# ---------- Eksperimen opsional ----------
+experiments:
+  temporal_comparison: true
+  ablation: true
+  saw_vs_wp: true
+  detector_evaluation: false   # butuh source.data_yaml + bobot model
+  imbalance_experiment: false  # butuh pipeline training (tidak ada di paket ini)
+  error_propagation: true
+  identity_audit_video: false  # butuh OpenCV + video; lambat
+
+detector_evaluation:
+  split: "test"
+  batch: 16
+
+mot_evaluation:
+  ground_truth_csv: null   # frame,gt_id,x1,y1,x2,y2 — bila tersedia

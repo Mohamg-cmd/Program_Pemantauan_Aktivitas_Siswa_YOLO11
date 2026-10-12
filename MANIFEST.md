@@ -1,0 +1,49 @@
+# Manifest Paket Source Code
+
+- `INSTALLATION_GUIDE.md`
+- `MANIFEST.md`
+- `PROGRAM_DESCRIPTION.md`
+- `README.md`
+- `RUN_PIPELINE.bat`
+- `RUN_TESTS.bat`
+- `config.yaml`
+- `data/README_INPUT_REQUIRED.txt`
+- `data/student_seats.csv`
+- `data/student_seats.csv.example`
+- `dataset/README_ASSET_OPTIONAL.txt`
+- `output/.gitkeep`
+- `requirements.txt`
+- `run_experiments.py`
+- `run_pipeline.py`
+- `run_pipeline.sh`
+- `run_tests.sh`
+- `src/__init__.py`
+- `src/ablation.py`
+- `src/aggregate.py`
+- `src/ahp.py`
+- `src/detect_track.py`
+- `src/error_propagation.py`
+- `src/evaluate_detector.py`
+- `src/identity.py`
+- `src/monte_carlo.py`
+- `src/mot_eval.py`
+- `src/provenance.py`
+- `src/rank_metrics.py`
+- `src/report.py`
+- `src/saw.py`
+- `src/sensitivity.py`
+- `src/temporal_analysis.py`
+- `src/visual_audit.py`
+- `src/wp.py`
+- `tests/conftest.py`
+- `tests/test_ahp_saw.py`
+- `tests/test_identity.py`
+- `tests/test_integration.py`
+- `tests/test_report.py`
+- `tests/test_sensitivity.py`
+- `tests/test_temporal.py`
+- `tools/calibrate_seats.py`
+- `tools/recompute_final_ahp.py`
+- `weights/README_ASSET_REQUIRED.txt`
+
+Berkas eksternal yang perlu disiapkan: `weights/best.pt`, `data/video_part001.mp4`, dan dataset YOLO jika evaluasi detector diaktifkan.

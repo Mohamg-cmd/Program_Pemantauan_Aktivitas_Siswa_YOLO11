@@ -1,0 +1,15 @@
+# Inti pipeline
+ultralytics>=8.3.0
+pandas>=2.0
+numpy>=1.24
+scipy>=1.10
+openpyxl>=3.1
+pyyaml>=6.0
+
+# Kalibrasi kursi (tools/calibrate_seats.py), pembacaan FPS video,
+# dan video audit identitas. Ultralytics biasanya sudah menariknya,
+# tetapi disebut eksplisit karena dipakai langsung oleh paket ini.
+opencv-python>=4.8
+
+# Pengujian (opsional; tidak dibutuhkan untuk menjalankan pipeline)
+pytest>=7.0
