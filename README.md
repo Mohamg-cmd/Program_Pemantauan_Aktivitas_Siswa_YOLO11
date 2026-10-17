@@ -1,6 +1,6 @@
 # Program Pemantauan Aktivitas Siswa Berbasis YOLO11
 
-Paket source code untuk mendeteksi dan melacak aktivitas siswa di ruang kelas, mengasosiasikan fragmen lintasan ke identitas siswa berdasarkan posisi kursi tetap, mengagregasi aktivitas secara temporal, dan menghasilkan analisis keputusan berbasis AHP–SAW.
+source code untuk mendeteksi dan melacak aktivitas siswa di ruang kelas, mengasosiasikan fragmen lintasan ke identitas siswa berdasarkan posisi kursi tetap, mengagregasi aktivitas secara temporal, dan menghasilkan analisis keputusan berbasis AHP–SAW.
 
 ## Alur utama
 
